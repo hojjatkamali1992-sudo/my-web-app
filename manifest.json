@@ -1,11 +1,11 @@
 {
-  "name": "bankiman",
-  "short_name": "App",
-  "description": "This is my awesome web app",
+  "name": "My Web App",
+  "short_name": "WebApp",
+  "description": "این یک اپ وب ساده ساخته شده با HTML/CSS/JS است",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "theme_color": "#0a74da",
   "icons": [
     {
       "src": "icon-192.png",
