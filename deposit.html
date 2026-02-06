@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<title>محاسبه سپرده بانکی</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <h2>محاسبه سپرده بانکی</h2>
+
+  <input type="text" id="amountInput" placeholder="مبلغ سپرده" oninput="formatNumber(this)">
+  <input type="text" id="rateInput" placeholder="درصد سود سالانه">
+
+  <label>مدت زمان:</label>
+  <input type="number" id="timeInput" placeholder="مقدار مدت">
+  <label><input type="radio" name="timeType" value="day" checked> روز</label>
+  <label><input type="radio" name="timeType" value="month"> ماه</label>
+  <label><input type="radio" name="timeType" value="year"> سال</label>
+
+  <label>نوع سود:</label>
+  <select id="depositType">
+    <option value="compound">سود مرکب</option>
+    <option value="simple">سود ساده</option>
+  </select>
+
+  <button onclick="saveDepositData()">محاسبه</button>
+  <button onclick="location.href='menu.html'">بازگشت به منوی اصلی</button>
+</div>
+
+<script>
+function formatNumber(input){
+  let value = input.value.replace(/,/g,'');
+  if(!isNaN(value) && value!=='') input.value = Number(value).toLocaleString('en-US');
+}
+
+function saveDepositData(){
+  const amount = document.getElementById('amountInput').value.replace(/,/g,'');
+  const rate = document.getElementById('rateInput').value;
+  const time = parseFloat(document.getElementById('timeInput').value);
+  const type = document.getElementById('depositType').value;
+  const timeType = document.querySelector('input[name="timeType"]:checked').value;
+
+  if(!amount || !rate || !time) return alert('لطفاً همه فیلدها را پر کنید');
+
+  let totalMonths;
+  if(timeType==='day') totalMonths = time/30;
+  else if(timeType==='month') totalMonths = time;
+  else if(timeType==='year') totalMonths = time*12;
+
+  localStorage.setItem('depositAmount', amount);
+  localStorage.setItem('depositRate', rate);
+  localStorage.setItem('depositMonths', totalMonths);
+  localStorage.setItem('depositType', type);
+
+  window.location.href='deposit-result.html';
+}
+</script>
+</body>
+</html>

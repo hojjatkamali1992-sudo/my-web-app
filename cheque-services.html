@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<title>خدمات چک</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.number-convert {
+  background: #e0f7fa;
+  padding: 15px;
+  border-radius: 15px;
+  margin: 15px 0;
+  font-size: 16px;
+}
+
+h3 { margin-top: 20px; color:#00796b; }
+p { font-size: 16px; margin-bottom: 10px; }
+img { width: 100%; border-radius: 15px; margin-bottom: 15px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>خدمات چک</h2>
+
+  <img src="images/check-image.jpg" alt="تصویر چک">
+
+  <div class="number-convert">
+    <h3>تبدیل عدد به حروف</h3>
+    <input type="text" id="numberInput" placeholder="عدد را وارد کنید" oninput="convertNumber()">
+    <p>به ریال: <span id="textRial"></span></p>
+    <p>به تومان: <span id="textToman"></span></p>
+  </div>
+
+  <div class="number-convert">
+    <h3>راهنمای ثبت چک</h3>
+    <p>مراحل ثبت چک صیادی معمولاً این ترتیب را دارد:</p>
+    <p>۱) ورود و احراز هویت</p>
+    <p>۲) انتخاب «ثبت چک»</p>
+    <p>۳) درج شناسه ۱۶ رقمی</p>
+    <p>۴) وارد کردن مبلغ و تاریخ</p>
+    <p>۵) ثبت کد ملی/شناسه ملی گیرنده</p>
+    <p>۶) تایید نهایی</p>
+  </div>
+
+  <div class="number-convert">
+    <h3>ثبت چک با پیامک</h3>
+    <p>برای ثبت چک صیادی از طریق پیامک، باید اطلاعات چک را با فرمت خاص به سرشماره ۴۰۴۰۷۰۱۷۰۱ ارسال کنید.  
+    فرمت پیامک ثبت چک:  
+    #شناسه/کد ملی گیرنده*مبلغ به ریال*تاریخ سررسید (YYYYMMDD)*شناسه صیادی*کد ملی صادرکننده*۳*</p>
+  </div>
+
+  <button onclick="location.href='menu.html'">بازگشت به منوی اصلی</button>
+</div>
+
+<script>
+function numberToWords(num) {
+  if (num === 0) return 'صفر';
+  const small = ['','یک','دو','سه','چهار','پنج','شش','هفت','هشت','نه','ده','یازده','دوازده','سیزده','چهارده','پانزده','شانزده','هفده','هجده','نوزده'];
+  const tens = ['','','بیست','سی','چهل','پنجاه','شصت','هفتاد','هشتاد','نود'];
+  const hundreds = ['','یکصد','دویست','سیصد','چهارصد','پانصد','ششصد','هفتصد','هفتصد','نهصد'];
+
+  let words = '';
+  let n = parseInt(num,10);
+
+  if(n>=1000){
+    words += numberToWords(Math.floor(n/1000)) + ' هزار ';
+    n = n % 1000;
+  }
+  if(n>=100){
+    words += hundreds[Math.floor(n/100)] + ' ';
+    n = n % 100;
+  }
+  if(n>=20){
+    words += tens[Math.floor(n/10)] + ' ';
+    n = n % 10;
+  }
+  if(n>0) words += small[n] + ' ';
+  return words.trim();
+}
+
+function convertNumber(){
+  const val = document.getElementById('numberInput').value.replace(/,/g,'');
+  if(!val || isNaN(val)) {
+    document.getElementById('textRial').innerText='';
+    document.getElementById('textToman').innerText='';
+    return;
+  }
+  const num = parseInt(val,10);
+  document.getElementById('textRial').innerText = numberToWords(num) + ' ریال';
+  document.getElementById('textToman').innerText = numberToWords(Math.floor(num/10)) + ' تومان';
+}
+</script>
+</body>
+</html>

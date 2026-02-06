@@ -1,0 +1,70 @@
+<!-- jQuery ضروری -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- تقویم شمسی Persian Datepicker -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
+<script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>یادآوری چک بانکی</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- کتابخانه تاریخ شمسی -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+</head>
+<body class="center">
+
+<div class="container">
+  <h2>یادآوری چک بانکی</h2>
+
+  <input type="text" id="checkDateTime" placeholder="انتخاب تاریخ و ساعت">
+  <input type="text" id="checkAmount" placeholder="مبلغ چک" oninput="formatNumber(this)">
+  <input type="text" id="checkName" placeholder="نام گیرنده">
+
+  <button onclick="setCheckReminder()">تنظیم یادآوری</button>
+  <button onclick="location.href='reminder-menu.html'">بازگشت</button>
+
+  <p id="ok"></p>
+</div>
+
+<script>
+// فعال سازی تاریخ شمسی + ساعت
+$('#checkDateTime').persianDatepicker({
+  format: 'YYYY/MM/DD HH:mm',
+  timePicker: {
+    enabled: true
+  }
+});
+
+function formatNumber(input) {
+  let value = input.value.replace(/,/g,'');
+  if (!isNaN(value) && value !== '') input.value = Number(value).toLocaleString('en-US');
+}
+
+function setCheckReminder() {
+  const dateTime = $('#checkDateTime').val();
+  const amount = $('#checkAmount').val().replace(/,/g,'');
+  const name = $('#checkName').val();
+
+  if (!dateTime || !amount || !name) {
+    alert('لطفاً همه فیلدها را پر کنید');
+    return;
+  }
+
+  const reminder = { type:'check', dateTime, amount, name };
+  let reminders = JSON.parse(localStorage.getItem('bankReminders') || '[]');
+  reminders.push(reminder);
+  localStorage.setItem('bankReminders', JSON.stringify(reminders));
+
+  $('#ok').text('یادآوری چک ثبت شد! 🎉');
+}
+</script>
+
+</body>
+</html>

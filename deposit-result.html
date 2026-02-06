@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<title>نتایج سپرده بانکی</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="container">
+  <h2>نتایج محاسبه سپرده بانکی</h2>
+
+  <h3>اطلاعات ورودی شما:</h3>
+  <p>مبلغ سپرده: <span id="showAmount"></span> تومان</p>
+  <p>درصد سود سالانه: <span id="showRate"></span></p>
+  <p>مدت زمان: <span id="showMonths"></span> ماه تقریبی</p>
+  <p>نوع سود: <span id="showType"></span></p>
+
+  <h3>نتایج عددی:</h3>
+  <p>موجودی نهایی: <span id="finalBalance"></span> تومان</p>
+  <p>سود کل: <span id="totalInterest"></span> تومان</p>
+
+  <h3>نمودار رشد ماهانه سپرده</h3>
+  <canvas id="compoundChart" width="600" height="300"></canvas>
+
+  <p style="margin-top:20px; font-weight:bold;">
+    تمامی محاسبات بصورت تقریبی است، ممکن است سیاست‌های بانکی متغیر باشد.
+  </p>
+
+  <button onclick="location.href='deposit.html'">بازگشت</button>
+  <button onclick="location.href='menu.html'">بازگشت به منوی اصلی</button>
+</div>
+
+<script>
+const principal = parseFloat(localStorage.getItem('depositAmount') || 1000000);
+const rate = parseFloat(localStorage.getItem('depositRate') || 5)/100;
+const months = parseFloat(localStorage.getItem('depositMonths') || 12);
+const type = localStorage.getItem('depositType') || 'compound';
+
+document.getElementById('showAmount').innerText = principal.toLocaleString();
+document.getElementById('showRate').innerText = (rate*100).toFixed(2) + '%';
+document.getElementById('showMonths').innerText = months.toFixed(1);
+document.getElementById('showType').innerText = type==='compound' ? 'سود مرکب' : 'سود ساده';
+
+let balance = principal;
+let finalBalance = principal;
+let data=[], labels=[];
+
+if(type==='compound'){
+  for(let m=1; m<=months; m++){
+    balance = balance*(1+rate/12);
+    labels.push('ماه '+m);
+    data.push(balance.toFixed(0));
+  }
+  finalBalance = balance;
+}else{
+  const monthlyInterest = principal*rate/12;
+  for(let m=1;m<=months;m++){
+    finalBalance = principal + monthlyInterest*m;
+    labels.push('ماه '+m);
+    data.push(finalBalance.toFixed(0));
+  }
+}
+
+document.getElementById('finalBalance').innerText = parseFloat(finalBalance).toLocaleString();
+document.getElementById('totalInterest').innerText = parseFloat(finalBalance-principal).toLocaleString();
+
+const ctx = document.getElementById('compoundChart').getContext('2d');
+new Chart(ctx,{
+  type:'line',
+  data:{
+    labels:labels,
+    datasets:[{
+      label:'موجودی ماهانه',
+      data:data,
+      borderColor:'rgb(75,192,192)',
+      backgroundColor:'rgba(75,192,192,0.1)',
+      fill:true,
+      tension:0.3
+    }]
+  },
+  options:{ responsive:true }
+});
+</script>
+</body>
+</html>

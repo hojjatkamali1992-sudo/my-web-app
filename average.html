@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<title>میانگین سپرده بانکی</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <h2>محاسبه میانگین سپرده بانکی</h2>
+
+  <label>انتخاب بانک:</label>
+  <select id="bankSelect">
+    <option value="mehr">بانک مهر 4 درصدی</option>
+    <option value="resalat">بانک رسالت 2 درصدی</option>
+    <option value="other">سایر بانک‌ها 25 درصدی</option>
+  </select>
+
+  <input type="text" id="totalAmount" placeholder="مبلغ کل سپرده" oninput="formatNumber(this)">
+  <label>مدت سپرده گذاری:</label>
+  <input type="number" id="duration" placeholder="مدت (روز/ماه/سال)">
+  <label><input type="radio" name="durationType" value="day" checked> روز</label>
+  <label><input type="radio" name="durationType" value="month"> ماه</label>
+  <label><input type="radio" name="durationType" value="year"> سال</label>
+
+  <button onclick="calculateAverage()">محاسبه</button>
+  <button onclick="location.href='menu.html'">بازگشت به منوی اصلی</button>
+
+  <h3 id="resultTitle"></h3>
+  <p id="resultValue"></p>
+</div>
+
+<script>
+function formatNumber(input){
+  let value=input.value.replace(/,/g,'');
+  if(!isNaN(value)&&value!=='') input.value = Number(value).toLocaleString('en-US');
+}
+
+function calculateAverage(){
+  const bank = document.getElementById('bankSelect').value;
+  const amount = parseFloat(document.getElementById('totalAmount').value.replace(/,/g,''));
+  const duration = parseFloat(document.getElementById('duration').value);
+
+  if(!amount || !duration) return alert('لطفاً همه فیلدها را پر کنید');
+
+  let divisor;
+  if(bank==='mehr') divisor = 7;
+  else if(bank==='resalat') divisor = 9;
+  else divisor = 10;
+
+  const result = amount / divisor;
+
+  document.getElementById('resultTitle').innerText = 'نتیجه محاسبه:';
+  document.getElementById('resultValue').innerText = result.toLocaleString() + ' تومان';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<title>محاسبه وام بانکی</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+  <h2>محاسبه وام بانکی</h2>
+
+  <input type="text" id="loanAmount" placeholder="مبلغ وام" oninput="formatNumber(this)">
+  <input type="text" id="loanRate" placeholder="درصد سود سالانه">
+
+  <label>مدت زمان:</label>
+  <input type="number" id="loanTime" placeholder="مقدار مدت">
+  <label><input type="radio" name="loanTimeType" value="day" checked> روز</label>
+  <label><input type="radio" name="loanTimeType" value="month"> ماه</label>
+  <label><input type="radio" name="loanTimeType" value="year"> سال</label>
+
+  <button onclick="saveLoanData()">محاسبه</button>
+  <button onclick="location.href='menu.html'">بازگشت به منوی اصلی</button>
+</div>
+
+<script>
+function formatNumber(input){
+  let value=input.value.replace(/,/g,'');
+  if(!isNaN(value)&&value!=='') input.value = Number(value).toLocaleString('en-US');
+}
+
+function saveLoanData(){
+  const amount = document.getElementById('loanAmount').value.replace(/,/g,'');
+  const rate = document.getElementById('loanRate').value;
+  const time = parseFloat(document.getElementById('loanTime').value);
+  const timeType = document.querySelector('input[name="loanTimeType"]:checked').value;
+
+  if(!amount || !rate || !time) return alert('لطفاً همه فیلدها را پر کنید');
+
+  let totalMonths;
+  if(timeType==='day') totalMonths = time/30;
+  else if(timeType==='month') totalMonths = time;
+  else if(timeType==='year') totalMonths = time*12;
+
+  localStorage.setItem('loanAmount', amount);
+  localStorage.setItem('loanRate', rate);
+  localStorage.setItem('loanMonths', totalMonths);
+
+  window.location.href='loan-result.html';
+}
+</script>
+
+</body>
+</html>

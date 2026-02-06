@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<title>نتایج وام بانکی</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <h2>نتایج محاسبه وام بانکی</h2>
+
+  <h3>اطلاعات ورودی شما:</h3>
+  <p>مبلغ وام: <span id="showAmount"></span> تومان</p>
+  <p>درصد سود سالانه: <span id="showRate"></span></p>
+  <p>مدت زمان: <span id="showMonths"></span> ماه تقریبی</p>
+
+  <h3>نتایج عددی:</h3>
+  <p>سود کل: <span id="totalInterest"></span> تومان</p>
+  <p>مبلغ نهایی با سود: <span id="finalBalance"></span> تومان</p>
+
+  <h3>جزئیات ماهانه (نمودار)</h3>
+  <canvas id="loanChart" width="600" height="300"></canvas>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ماه</th>
+        <th>سود ماهانه (تومان)</th>
+        <th>موجودی کل (تومان)</th>
+      </tr>
+    </thead>
+    <tbody id="loanTableBody"></tbody>
+  </table>
+
+  <p style="margin-top:20px;font-weight:bold;">
+    تمامی محاسبات بصورت تقریبی است، ممکن است سیاست‌های بانکی متغیر باشد.
+  </p>
+
+  <button onclick="location.href='loan.html'">بازگشت</button>
+  <button onclick="location.href='menu.html'">بازگشت به منوی اصلی</button>
+</div>
+
+<script>
+const principal = parseFloat(localStorage.getItem('loanAmount') || 1000000);
+const rate = parseFloat(localStorage.getItem('loanRate') || 18)/100;
+const months = parseFloat(localStorage.getItem('loanMonths') || 12);
+
+document.getElementById('showAmount').innerText = principal.toLocaleString();
+document.getElementById('showRate').innerText = (rate*100).toFixed(2) + '%';
+document.getElementById('showMonths').innerText = months.toFixed(1);
+
+let balance = principal;
+let totalInterest = 0;
+const tbody = document.getElementById('loanTableBody');
+let chartLabels = [], chartData = [];
+
+for(let m=1; m<=months; m++){
+  const monthlyInterest = balance * rate/12;
+  balance += monthlyInterest;
+  totalInterest += monthlyInterest;
+
+  const row = document.createElement('tr');
+  row.innerHTML = `<td>${m}</td><td>${monthlyInterest.toFixed(0).toLocaleString()}</td><td>${balance.toFixed(0).toLocaleString()}</td>`;
+  tbody.appendChild(row);
+
+  chartLabels.push('ماه '+m);
+  chartData.push(balance.toFixed(0));
+}
+
+document.getElementById('totalInterest').innerText = parseFloat(totalInterest).toLocaleString();
+document.getElementById('finalBalance').innerText = parseFloat(balance).toLocaleString();
+
+const ctx = document.getElementById('loanChart').getContext('2d');
+new Chart(ctx,{
+  type:'line',
+  data:{
+    labels: chartLabels,
+    datasets:[{
+      label:'موجودی ماهانه',
+      data: chartData,
+      borderColor:'rgb(75,192,192)',
+      backgroundColor:'rgba(75,192,192,0.1)',
+      fill:true,
+      tension:0.3
+    }]
+  },
+  options:{ responsive:true }
+});
+</script>
+
+</body>
+</html>

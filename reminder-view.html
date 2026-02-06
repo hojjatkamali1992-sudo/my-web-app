@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<title>یادآوری‌ها</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+</head>
+<body class="center">
+
+<div class="container">
+<h2>یادآوری‌های ثبت‌شده</h2>
+<div id="remindersList"></div>
+<button onclick="location.href='reminder-menu.html'">بازگشت</button>
+</div>
+
+<script>
+// نمایش یادآوری‌ها
+function loadReminders() {
+  let reminders = JSON.parse(localStorage.getItem('bankReminders') || '[]');
+  const container = document.getElementById('remindersList');
+  container.innerHTML = '';
+  reminders.forEach((r, i) => {
+    let html = '';
+    if(r.type==='check') {
+      html = `<div class="reminderItem">چک: ${r.name} | مبلغ: ${r.amount} | زمان: ${r.dateTime}</div>`;
+    } else if(r.type==='loan') {
+      html = `<div class="reminderItem">قسط: ${r.bank} | مبلغ قسط: ${r.amount} | مبلغ کل: ${r.total} | تاریخ سررسید: ${r.date}</div>`;
+    }
+    container.innerHTML += html;
+  });
+}
+loadReminders();
+
+// هشدار اتوماتیک هر ثانیه
+setInterval(() => {
+  let reminders = JSON.parse(localStorage.getItem('bankReminders') || '[]');
+  let now = new Date();
+  reminders.forEach((r, i) => {
+    if(r.type==='check') {
+      const rDate = new Date(r.dateTime.replace(' ','T'));
+      if(now >= rDate) {
+        alert(`یادآوری چک: ${r.name} | مبلغ: ${r.amount}`);
+        reminders.splice(i,1);
+      }
+    } else if(r.type==='loan') {
+      const rDate = new Date(r.date.replace(' ','T'));
+      if(now >= rDate) {
+        alert(`یادآوری قسط: ${r.bank} | مبلغ قسط: ${r.amount}`);
+        reminders.splice(i,1);
+      }
+    }
+  });
+  localStorage.setItem('bankReminders', JSON.stringify(reminders));
+},1000);
+</script>
+</body>
+</html>

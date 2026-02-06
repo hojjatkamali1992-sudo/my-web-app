@@ -1,0 +1,76 @@
+<!-- jQuery ضروری -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- تقویم شمسی Persian Datepicker -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
+<script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>یادآوری اقساط بانکی</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- jQuery و Persian Datepicker -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+
+  <style>
+    .loanItem { border:1px solid #ccc; padding:10px; margin:8px 0; border-radius:8px; }
+  </style>
+</head>
+<body class="center">
+
+<div class="container">
+  <h2>یادآوری اقساط بانکی</h2>
+
+  <div id="loanContainer"></div>
+  <button onclick="addLoan()">اضافه کردن اقساط</button>
+  <button onclick="setLoanReminder()">تنظیم یادآوری</button>
+  <button onclick="location.href='reminder-menu.html'">بازگشت</button>
+  <p id="okLoan"></p>
+</div>
+
+<script>
+function formatNumber(input) {
+  let value = input.value.replace(/,/g,'');
+  if (!isNaN(value) && value !== '') input.value = Number(value).toLocaleString('en-US');
+}
+
+function addLoan() {
+  const div = document.createElement('div');
+  div.classList.add('loanItem');
+  div.innerHTML = `
+    <input type="text" class="loanAmount" placeholder="مبلغ قسط" oninput="formatNumber(this)">
+    <input type="text" class="loanTotal" placeholder="مبلغ کل باقیمانده" oninput="formatNumber(this)">
+    <input type="text" class="loanDate" placeholder="تاریخ سررسید">
+    <input type="text" class="loanBank" placeholder="نام بانک">
+  `;
+  document.getElementById('loanContainer').appendChild(div);
+
+  // فعال سازی تاریخ شمسی
+  $(div).find('.loanDate').persianDatepicker({ format:'YYYY/MM/DD' });
+}
+
+function setLoanReminder() {
+  let reminders = JSON.parse(localStorage.getItem('bankReminders') || '[]');
+  document.querySelectorAll('.loanItem').forEach(div => {
+    const amount = div.querySelector('.loanAmount').value.replace(/,/g,'');
+    const total = div.querySelector('.loanTotal').value.replace(/,/g,'');
+    const date = div.querySelector('.loanDate').value;
+    const bank = div.querySelector('.loanBank').value;
+
+    if(amount && total && date && bank) {
+      reminders.push({ type:'loan', amount, total, date, bank });
+    }
+  });
+  localStorage.setItem('bankReminders', JSON.stringify(reminders));
+  document.getElementById('okLoan').innerText = 'یادآوری اقساط ثبت شد! 🎉';
+}
+</script>
+
+</body>
+</html>
